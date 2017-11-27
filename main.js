@@ -2,6 +2,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var mysql = require('mysql');
 var app = express();
+var urlencodedParser = bodyParser.urlencoded({extended: false});
 app.use(bodyParser.json());
 var state = {
     pool: null
@@ -79,34 +80,42 @@ app.post('/create', function (req, res) {
 
 app.post('/update', function (req, res) {
     var reqBody = req.body;
-    var sql = "UPDATE users SET name= '" + reqBody.name + "',gender = '" + reqBody.gender + "' WHERE id = '" + query.id + "'";
+
+    if (!reqBody.id)
+        return res.end("Wrong id!");
+
+    if (!reqBody.name)
+        return res.end("Wrong name!");
+
+    if (!reqBody.username)
+        return res.end("Wrong username!");
+
+    var sql = "UPDATE users SET name= '" + reqBody.name + "', username = '" + reqBody.username + "' WHERE id = '" + reqBody.id + "'";
 
     connection.query(sql, function (err, rows, field) {
         if (!err) {
-            res.end("Success: ", rows);
+            res.end("Success update user : ", reqBody.id);
         } else {
             throw err;
         }
     });
 });
 
-app.get('/delete', function (req, res) {
-    var query = req.query;
-    var sql = "DELETE FROM users WHERE id = '" + query.id + "'";
+app.post('/delete', function (req, res) {
+    var reqBody = req.body;
+
+    if (!reqBody.id)
+        return res.end("Wrong id!");
+
+    var sql = "DELETE FROM users WHERE id = '" + reqBody.id + "'";
 
     connection.query(sql, function (err, rows, field) {
         if (!err) {
-            res.end("Success: ", rows)
+            res.end("Success delete user: ", reqBody.id);
         } else {
             throw err;
         }
     });
-});
-
-app.get('/delete', function (req, res) {
-    var query = req.query;
-
-    res.end("delete");
 });
 
 console.log("Server listening on port " + PORT);
