@@ -23,12 +23,32 @@ state.pool = mysql.createPool({
 
 var connection = state.pool;
 
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
+
 app.get('/find_all', function (req, res) {
     var sql = "SELECT * FROM users";
 
     connection.query(sql, function (err, rows, field) {
         if (!err) {
-            console.log('rows: ', rows);
+//            console.log('rows: ', rows);
+            res.json({code: '00', content: rows});
         } else {
             throw err;
         }
@@ -42,7 +62,7 @@ app.get('/find_user_by_id', function (req, res) {
 
     connection.query(sql, function (err, rows, field) {
         if (!err) {
-            res.end("Success: ", rows);
+            res.json({code: '00', content: rows});
         } else {
             throw err;
         }
@@ -71,7 +91,7 @@ app.post('/create', function (req, res) {
 
     connection.query(sql, params, function (err, rows, field) {
         if (!err) {
-            res.end("Success insert into users");
+             res.json({code: '00', content: 'Success insert user'});
         } else {
             throw err;
         }
@@ -94,7 +114,7 @@ app.post('/update', function (req, res) {
 
     connection.query(sql, function (err, rows, field) {
         if (!err) {
-            res.end("Success update user : ", reqBody.id);
+             res.json({code: '00', content: 'Success update user'});
         } else {
             throw err;
         }
