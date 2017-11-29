@@ -63,13 +63,13 @@ app.get('/find_all', function (req, res) {
 app.get('/find_user_by_id', function (req, res) {
     var query = req.query;
 
-    var sql = "SELECT * FROM users WHERE id = '" + query.id + "'";
+    var sql = "SELECT username FROM users WHERE id = '" + query.id + "'";
 
     connection.query(sql, function (err, rows, field) {
         if (!err) {
             // Validate rows, if no record show no record to user instead of [] => empty array
             if (rows.length > 0) {
-                res.json({code: '00', content: rows});
+                res.json({code: '00', content: rows}); // return all properties inside rows
             } else {
                 res.json({code: '00', content: "No record"});
             }
