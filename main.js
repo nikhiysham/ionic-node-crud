@@ -47,10 +47,15 @@ app.get('/find_all', function (req, res) {
 
     connection.query(sql, function (err, rows, field) {
         if (!err) {
-//            console.log('rows: ', rows);
-            res.json({code: '00', content: rows});
+            // Validate rows, if no record show no record to user instead of [] => empty array
+            if (rows.length > 0) {
+                res.json({code: '00', content: rows});
+            } else {
+                res.json({code: '00', content: "No record"});
+            }
         } else {
-            throw err;
+            // In case if error during query to mysql db
+            res.json({code: '99', content: err});
         }
     });
 });
@@ -62,9 +67,15 @@ app.get('/find_user_by_id', function (req, res) {
 
     connection.query(sql, function (err, rows, field) {
         if (!err) {
-            res.json({code: '00', content: rows});
+            // Validate rows, if no record show no record to user instead of [] => empty array
+            if (rows.length > 0) {
+                res.json({code: '00', content: rows});
+            } else {
+                res.json({code: '00', content: "No record"});
+            }
         } else {
-            throw err;
+            // In case if error during query to mysql db
+            res.json({code: '99', content: err});
         }
     });
 });
@@ -91,7 +102,7 @@ app.post('/create', function (req, res) {
 
     connection.query(sql, params, function (err, rows, field) {
         if (!err) {
-             res.json({code: '00', content: 'Success insert user'});
+            res.json({code: '00', content: 'Success insert user'});
         } else {
             throw err;
         }
@@ -114,7 +125,7 @@ app.post('/update', function (req, res) {
 
     connection.query(sql, function (err, rows, field) {
         if (!err) {
-             res.json({code: '00', content: 'Success update user'});
+            res.json({code: '00', content: 'Success update user'});
         } else {
             throw err;
         }
